@@ -46,6 +46,7 @@ const makeSegmentTransitionStyle = (duration, easing, furtherStyles = {}) => {
   // Merge CSS transition necessary for chart animation with the ones provided by "segmentsStyle"
   const transition = [
     `stroke-dashoffset ${duration}ms ${easing}`,
+    `stroke-width 0.1s ${easing}`,
     furtherStyles.transition,
   ]
     .filter(Boolean)
@@ -84,6 +85,7 @@ const makeSegments = (data, props, hide) => {
   }
 
   return data.map((dataEntry, index) => {
+    const isActiveSegment = index === props.activeIndex;
     const startAngle = lastSegmentAngle;
     lastSegmentAngle += dataEntry.degrees + segmentsPaddingAngle;
 
@@ -98,6 +100,9 @@ const makeSegments = (data, props, hide) => {
         lineWidth={(props.radius / 100) * props.lineWidth}
         reveal={reveal}
         style={style}
+        active={isActiveSegment}
+        expand={props.expand}
+        expandRatio={props.expandRatio}
         stroke={dataEntry.color}
         strokeLinecap={props.rounded ? 'round' : undefined}
         fill="none"
@@ -168,7 +173,7 @@ export default class ReactMinimalPieChart extends PureComponent {
           viewBox={`0 0 ${evaluateViewBoxSize(this.props.ratio, VIEWBOX_SIZE)}`}
           width="100%"
           height="100%"
-          style={{ display: 'block' }}
+          style={{ display: 'block', overflow: 'visible' }}
         >
           {makeSegments(normalizedData, this.props, this.hideSegments)}
         </svg>
@@ -208,6 +213,9 @@ ReactMinimalPieChart.propTypes = {
   animate: PropTypes.bool,
   animationDuration: PropTypes.number,
   animationEasing: PropTypes.string,
+  expand: PropTypes.bool,
+  expandRatio: PropTypes.number,
+  activeIndex: PropTypes.number,
   reveal: PropTypes.number,
   children: PropTypes.node,
   onMouseOver: PropTypes.func,
@@ -228,6 +236,9 @@ ReactMinimalPieChart.defaultProps = {
   animate: false,
   animationDuration: 500,
   animationEasing: 'ease-out',
+  activeIndex: -1,
+  expand: true,
+  expandRatio: 1.4,
   onMouseOver: undefined,
   onMouseOut: undefined,
   onClick: undefined,

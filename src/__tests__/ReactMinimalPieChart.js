@@ -177,7 +177,7 @@ describe('ReactMinimalPieChart component', () => {
         );
         const firstPath = wrapper.find('ReactMinimalPieChartPath').first();
 
-        const expected = 'stroke-dashoffset 100ms ease';
+        const expected = 'stroke-dashoffset 100ms ease,stroke-width 0.1s ease';
         const actual = firstPath.prop('style').transition;
         expect(actual).toEqual(expected);
       });
@@ -196,7 +196,8 @@ describe('ReactMinimalPieChart component', () => {
         );
         const firstPath = wrapper.find('ReactMinimalPieChartPath').first();
 
-        const expected = 'stroke-dashoffset 100ms ease,custom-transition';
+        const expected =
+          'stroke-dashoffset 100ms ease,stroke-width 0.1s ease,custom-transition';
         const actual = firstPath.prop('style').transition;
         expect(actual).toEqual(expected);
       });

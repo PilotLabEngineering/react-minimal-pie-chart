@@ -30,6 +30,9 @@ export default function ReactMinimalPieChartPath({
   radius,
   lineWidth,
   reveal,
+  active,
+  expand,
+  expandRatio,
   ...props
 }) {
   const actualRadio = radius - lineWidth / 2;
@@ -50,10 +53,12 @@ export default function ReactMinimalPieChartPath({
     strokeDashoffset = strokeDasharray + (strokeDasharray / 100) * reveal;
   }
 
+  const strokeWidth = lineWidth * (active && expand ? expandRatio : 1);
+
   return (
     <path
       d={pathCommands}
-      strokeWidth={lineWidth}
+      strokeWidth={strokeWidth}
       strokeDasharray={strokeDasharray}
       strokeDashoffset={strokeDashoffset}
       {...props}
@@ -71,6 +76,9 @@ ReactMinimalPieChartPath.propTypes = {
   radius: PropTypes.number,
   lineWidth: PropTypes.number,
   reveal: PropTypes.number,
+  active: PropTypes.bool,
+  expand: PropTypes.bool,
+  expandRatio: PropTypes.number,
 };
 
 ReactMinimalPieChartPath.defaultProps = {
@@ -78,4 +86,5 @@ ReactMinimalPieChartPath.defaultProps = {
   lengthAngle: 0,
   lineWidth: 100,
   radius: 100,
+  expandRatio: 1.5,
 };

@@ -27,6 +27,7 @@ class DemoInteraction extends Component {
     super(props);
     this.state = {
       data: dataMock,
+      activeIndex: -1,
     };
 
     this.onMouseOut = this.onMouseOut.bind(this);
@@ -35,17 +36,17 @@ class DemoInteraction extends Component {
 
   onMouseOut(e, d, i) {
     this.setState({
-      data: dataMock,
+      activeIndex: -1,
     });
   }
 
   onMouseOver(e, d, i) {
-    const data = d.map((entry, index) => {
-      return index === i ? { ...entry, color: 'grey' } : entry;
-    });
+    // const data = d.map((entry, index) => {
+    //   return index === i ? { ...entry, color: 'grey' } : entry;
+    // });
 
     this.setState({
-      data,
+      activeIndex: i,
     });
   }
 
@@ -53,10 +54,13 @@ class DemoInteraction extends Component {
     return (
       <PieChart
         data={this.state.data}
+        activeIndex={this.state.activeIndex}
         segmentsStyle={{ transition: 'stroke .3s' }}
+        lineWidth={15}
         onClick={action('CLICK')}
         onMouseOver={this.onMouseOver}
         onMouseOut={this.onMouseOut}
+        expand
         animate
       />
     );
