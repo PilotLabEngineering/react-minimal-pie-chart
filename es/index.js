@@ -118,7 +118,10 @@ function ReactMinimalPieChartPath(_ref) {
       radius = _ref.radius,
       lineWidth = _ref.lineWidth,
       reveal = _ref.reveal,
-      props = objectWithoutProperties(_ref, ['cx', 'cy', 'startAngle', 'lengthAngle', 'radius', 'lineWidth', 'reveal']);
+      active = _ref.active,
+      expand = _ref.expand,
+      expandRatio = _ref.expandRatio,
+      props = objectWithoutProperties(_ref, ['cx', 'cy', 'startAngle', 'lengthAngle', 'radius', 'lineWidth', 'reveal', 'active', 'expand', 'expandRatio']);
 
   var actualRadio = radius - lineWidth / 2;
   var pathCommands = makePathCommands(cx, cy, startAngle, lengthAngle, actualRadio);
@@ -132,9 +135,11 @@ function ReactMinimalPieChartPath(_ref) {
     strokeDashoffset = strokeDasharray + strokeDasharray / 100 * reveal;
   }
 
+  var strokeWidth = lineWidth * (active && expand ? expandRatio : 1);
+
   return React.createElement('path', _extends({
     d: pathCommands,
-    strokeWidth: lineWidth,
+    strokeWidth: strokeWidth,
     strokeDasharray: strokeDasharray,
     strokeDashoffset: strokeDashoffset
   }, props));
@@ -149,14 +154,18 @@ ReactMinimalPieChartPath.propTypes = {
   lengthAngle: PropTypes.number,
   radius: PropTypes.number,
   lineWidth: PropTypes.number,
-  reveal: PropTypes.number
+  reveal: PropTypes.number,
+  active: PropTypes.bool,
+  expand: PropTypes.bool,
+  expandRatio: PropTypes.number
 };
 
 ReactMinimalPieChartPath.defaultProps = {
   startAngle: 0,
   lengthAngle: 0,
   lineWidth: 100,
-  radius: 100
+  radius: 100,
+  expandRatio: 1.5
 };
 
 var VIEWBOX_SIZE = 100;
@@ -198,7 +207,7 @@ var makeSegmentTransitionStyle = function makeSegmentTransitionStyle(duration, e
   var furtherStyles = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
   // Merge CSS transition necessary for chart animation with the ones provided by "segmentsStyle"
-  var transition = ['stroke-dashoffset ' + duration + 'ms ' + easing, furtherStyles.transition].filter(Boolean).join(',');
+  var transition = ['stroke-dashoffset ' + duration + 'ms ' + easing, 'stroke-width 0.1s ' + easing, furtherStyles.transition].filter(Boolean).join(',');
 
   return {
     transition: transition
@@ -228,11 +237,9 @@ var makeSegments = function makeSegments(data, props, hide) {
   }
 
   return data.map(function (dataEntry, index) {
+    var isActiveSegment = index === props.activeIndex;
     var startAngle = lastSegmentAngle;
     lastSegmentAngle += dataEntry.degrees + segmentsPaddingAngle;
-
-    console.log(index);
-    console.log(props);
 
     return React.createElement(ReactMinimalPieChartPath, {
       key: dataEntry.key || index,
@@ -244,6 +251,9 @@ var makeSegments = function makeSegments(data, props, hide) {
       lineWidth: props.radius / 100 * props.lineWidth,
       reveal: reveal,
       style: style,
+      active: isActiveSegment,
+      expand: props.expand,
+      expandRatio: props.expandRatio,
       stroke: dataEntry.color,
       strokeLinecap: props.rounded ? 'round' : undefined,
       fill: 'none',
@@ -320,7 +330,7 @@ var ReactMinimalPieChart = function (_PureComponent) {
           viewBox: '0 0 ' + evaluateViewBoxSize(this.props.ratio, VIEWBOX_SIZE),
           width: '100%',
           height: '100%',
-          style: { display: 'block' }
+          style: { display: 'block', overflow: 'visible' }
         },
         makeSegments(normalizedData, this.props, this.hideSegments)
       ),
@@ -356,6 +366,7 @@ ReactMinimalPieChart.propTypes = {
   animationDuration: PropTypes.number,
   animationEasing: PropTypes.string,
   expand: PropTypes.bool,
+  expandRatio: PropTypes.number,
   activeIndex: PropTypes.number,
   reveal: PropTypes.number,
   children: PropTypes.node,
@@ -379,6 +390,7 @@ ReactMinimalPieChart.defaultProps = {
   animationEasing: 'ease-out',
   activeIndex: -1,
   expand: true,
+  expandRatio: 1.4,
   onMouseOver: undefined,
   onMouseOut: undefined,
   onClick: undefined
