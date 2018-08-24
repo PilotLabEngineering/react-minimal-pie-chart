@@ -74,6 +74,8 @@ const makeSegments = (data, props, hide) => {
 
   return data.map((dataEntry, index) => {
     const isActiveSegment = index === props.activeIndex;
+    const isFocusSegment = index === props.focusIndex;
+
     const startAngle = lastSegmentAngle;
     lastSegmentAngle += dataEntry.degrees + segmentsPaddingAngle;
 
@@ -89,8 +91,10 @@ const makeSegments = (data, props, hide) => {
         reveal={reveal}
         style={style}
         active={isActiveSegment}
+        focus={isFocusSegment}
         expand={props.expand}
-        expandPercent={props.expandPercent}
+        expandFocusPercent={props.expandFocusPercent}
+        expandActivePercent={props.expandActivePercent}
         stroke={dataEntry.color}
         strokeLinecap={props.rounded ? 'round' : undefined}
         fill="none"
@@ -208,8 +212,10 @@ ReactMinimalPieChart.propTypes = {
   animationDuration: PropTypes.number,
   animationEasing: PropTypes.string,
   expand: PropTypes.bool,
-  expandPercent: PropTypes.number,
+  expandFocusPercent: PropTypes.number,
+  expandActivePercent: PropTypes.number,
   activeIndex: PropTypes.number,
+  hoverIndex: PropTypes.number,
   reveal: PropTypes.number,
   children: PropTypes.node,
   onMouseOver: PropTypes.func,
@@ -234,9 +240,11 @@ ReactMinimalPieChart.defaultProps = {
   animate: false,
   animationDuration: 500,
   animationEasing: 'ease-out',
-  activeIndex: -1,
   expand: true,
-  expandPercent: 0.4,
+  activeIndex: -1,
+  focusIndex: -1,
+  expandFocusPercent: 0.1,
+  expandActivePercent: 0.3,
   onMouseOver: undefined,
   onMouseOut: undefined,
   onClick: undefined,

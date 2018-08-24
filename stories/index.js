@@ -28,25 +28,29 @@ class DemoInteraction extends Component {
     this.state = {
       data: dataMock,
       activeIndex: -1,
+      focusIndex: -1,
     };
 
+    this.onSegmentClick = this.onSegmentClick.bind(this);
     this.onMouseOut = this.onMouseOut.bind(this);
     this.onMouseOver = this.onMouseOver.bind(this);
   }
 
+  onSegmentClick(e, d, i) {
+    this.setState({
+      activeIndex: i,
+    });
+  }
+
   onMouseOut(e, d, i) {
     this.setState({
-      activeIndex: -1,
+      focusIndex: -1,
     });
   }
 
   onMouseOver(e, d, i) {
-    // const data = d.map((entry, index) => {
-    //   return index === i ? { ...entry, color: 'grey' } : entry;
-    // });
-
     this.setState({
-      activeIndex: i,
+      focusIndex: i,
     });
   }
 
@@ -57,6 +61,7 @@ class DemoInteraction extends Component {
         height={100}
         data={this.state.data}
         activeIndex={this.state.activeIndex}
+        focusIndex={this.state.focusIndex}
         segmentsStyle={{
           transition: 'stroke-width .1s ease-out',
           cursor: 'pointer',
@@ -65,11 +70,10 @@ class DemoInteraction extends Component {
         cutout={true}
         cutoutRadius={30}
         lengthAngle={-360}
-        onClick={action('CLICK')}
+        onClick={this.onSegmentClick}
         onMouseOver={this.onMouseOver}
         onMouseOut={this.onMouseOut}
         expand
-        expandPercent={0.2}
         animate
       />
     );
