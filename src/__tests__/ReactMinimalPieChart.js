@@ -9,10 +9,6 @@ const dataMock = [
   { value: 20, color: 'green' },
 ];
 
-const styleMock = {
-  color: 'green',
-};
-
 jest.useFakeTimers();
 
 beforeAll(() => {
@@ -35,41 +31,6 @@ describe('ReactMinimalPieChart component', () => {
 
     const pathElements = wrapper.find('ReactMinimalPieChartPath');
     expect(pathElements.length).toEqual(dataMock.length);
-  });
-
-  it('Should pass down className and style props to the wrapping div', () => {
-    const wrapper = shallow(
-      <PieChart
-        data={dataMock}
-        className="foo"
-        style={styleMock}
-      />
-    );
-
-    expect(wrapper.prop('className')).toBe('foo');
-    expect(wrapper.prop('style')).toEqual(styleMock);
-  });
-
-  describe('<svg> element', () => {
-    it('Should be horizontal when "ratio" > 1', () => {
-      const wrapper = shallow(<PieChart
-        data={dataMock}
-        ratio={4}
-      />);
-
-      const svg = wrapper.find('svg').first();
-      expect(svg.prop('viewBox')).toBe('0 0 100 25');
-    });
-
-    it('Should be certical when "ratio" < 1', () => {
-      const wrapper = shallow(<PieChart
-        data={dataMock}
-        ratio={1 / 10}
-      />);
-
-      const svg = wrapper.find('svg').first();
-      expect(svg.prop('viewBox')).toBe('0 0 10 100');
-    });
   });
 
   describe('Partial circle', () => {
@@ -177,7 +138,7 @@ describe('ReactMinimalPieChart component', () => {
         );
         const firstPath = wrapper.find('ReactMinimalPieChartPath').first();
 
-        const expected = 'stroke-dashoffset 100ms ease,stroke-width 0.1s ease';
+        const expected = 'stroke-dashoffset 100ms ease';
         const actual = firstPath.prop('style').transition;
         expect(actual).toEqual(expected);
       });
@@ -196,8 +157,7 @@ describe('ReactMinimalPieChart component', () => {
         );
         const firstPath = wrapper.find('ReactMinimalPieChartPath').first();
 
-        const expected =
-          'stroke-dashoffset 100ms ease,stroke-width 0.1s ease,custom-transition';
+        const expected = 'stroke-dashoffset 100ms ease,custom-transition';
         const actual = firstPath.prop('style').transition;
         expect(actual).toEqual(expected);
       });

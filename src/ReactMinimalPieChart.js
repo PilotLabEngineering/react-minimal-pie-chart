@@ -1,21 +1,10 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Path from './ReactMinimalPieChartPath';
-
-const VIEWBOX_SIZE = 100;
-const VIEWBOX_HALF_SIZE = VIEWBOX_SIZE / 2;
+import Circle from './ReactMinimalPieChartCircle';
 
 const sumValues = data =>
   data.reduce((acc, dataEntry) => acc + dataEntry.value, 0);
-
-const evaluateViewBoxSize = (ratio, baseSize) => {
-  // Wide ratio
-  if (ratio > 1) {
-    return `${baseSize} ${baseSize / ratio}`;
-  }
-  // Narrow/squared ratio
-  return `${baseSize * ratio} ${baseSize}`;
-};
 
 // @TODO extract padding evaluation
 const evaluateDegreesFromValues = (
@@ -46,7 +35,6 @@ const makeSegmentTransitionStyle = (duration, easing, furtherStyles = {}) => {
   // Merge CSS transition necessary for chart animation with the ones provided by "segmentsStyle"
   const transition = [
     `stroke-dashoffset ${duration}ms ${easing}`,
-    `stroke-width 0.1s ${easing}`,
     furtherStyles.transition,
   ]
     .filter(Boolean)
@@ -102,7 +90,7 @@ const makeSegments = (data, props, hide) => {
         style={style}
         active={isActiveSegment}
         expand={props.expand}
-        expandRatio={props.expandRatio}
+        expandPercent={props.expandPercent}
         stroke={dataEntry.color}
         strokeLinecap={props.rounded ? 'round' : undefined}
         fill="none"
@@ -165,20 +153,22 @@ export default class ReactMinimalPieChart extends PureComponent {
     );
 
     return (
-      <div
-        className={this.props.className}
-        style={this.props.style}
+      <svg
+        viewBox={`0 0 ${this.props.width} ${this.props.height}`}
+        width="100%"
+        height="100%"
+        style={{ display: 'block', overflow: 'visible' }}
       >
-        <svg
-          viewBox={`0 0 ${evaluateViewBoxSize(this.props.ratio, VIEWBOX_SIZE)}`}
-          width="100%"
-          height="100%"
-          style={{ display: 'block', overflow: 'visible' }}
-        >
-          {makeSegments(normalizedData, this.props, this.hideSegments)}
-        </svg>
-        {this.props.children}
-      </div>
+        {makeSegments(normalizedData, this.props, this.hideSegments)}
+        {this.props.cutout ? (
+          <Circle
+            cx={this.props.cx}
+            cy={this.props.cy}
+            radius={this.props.cutoutRadius}
+            fill={this.props.cutoutFill}
+          />
+        ) : null}
+      </svg>
     );
   }
 }
@@ -193,9 +183,10 @@ ReactMinimalPieChart.propTypes = {
       color: PropTypes.string,
     })
   ),
+  width: PropTypes.number,
+  height: PropTypes.number,
   cx: PropTypes.number,
   cy: PropTypes.number,
-  ratio: PropTypes.number,
   totalValue: PropTypes.number,
   className: PropTypes.string,
   style: PropTypes.objectOf(
@@ -209,12 +200,15 @@ ReactMinimalPieChart.propTypes = {
   paddingAngle: PropTypes.number,
   lineWidth: PropTypes.number,
   radius: PropTypes.number,
+  cutout: PropTypes.bool,
+  cutoutRadius: PropTypes.number,
+  cutoutFill: PropTypes.string,
   rounded: PropTypes.bool,
   animate: PropTypes.bool,
   animationDuration: PropTypes.number,
   animationEasing: PropTypes.string,
   expand: PropTypes.bool,
-  expandRatio: PropTypes.number,
+  expandPercent: PropTypes.number,
   activeIndex: PropTypes.number,
   reveal: PropTypes.number,
   children: PropTypes.node,
@@ -224,21 +218,25 @@ ReactMinimalPieChart.propTypes = {
 };
 
 ReactMinimalPieChart.defaultProps = {
-  cx: VIEWBOX_HALF_SIZE,
-  cy: VIEWBOX_HALF_SIZE,
-  ratio: 1,
+  width: 100,
+  height: 100,
+  cx: 50,
+  cy: 50,
   startAngle: 0,
   lengthAngle: 360,
   paddingAngle: 0,
   lineWidth: 100,
-  radius: VIEWBOX_HALF_SIZE,
+  radius: 50,
+  cutout: false,
+  cutoutRadius: 30,
+  cutoutFill: '#FFFFFF',
   rounded: false,
   animate: false,
   animationDuration: 500,
   animationEasing: 'ease-out',
   activeIndex: -1,
   expand: true,
-  expandRatio: 1.4,
+  expandPercent: 0.4,
   onMouseOver: undefined,
   onMouseOut: undefined,
   onClick: undefined,

@@ -53,14 +53,23 @@ class DemoInteraction extends Component {
   render() {
     return (
       <PieChart
+        width={100}
+        height={100}
         data={this.state.data}
         activeIndex={this.state.activeIndex}
-        segmentsStyle={{ transition: 'stroke .3s' }}
-        lineWidth={15}
+        segmentsStyle={{
+          transition: 'stroke-width .1s ease-out',
+          cursor: 'pointer',
+        }}
+        radius={40}
+        cutout={true}
+        cutoutRadius={30}
+        lengthAngle={-360}
         onClick={action('CLICK')}
         onMouseOver={this.onMouseOver}
         onMouseOut={this.onMouseOut}
         expand
+        expandPercent={0.2}
         animate
       />
     );
