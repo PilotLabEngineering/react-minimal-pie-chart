@@ -118,10 +118,12 @@ function ReactMinimalPieChartPath(_ref) {
       radius = _ref.radius,
       lineWidth = _ref.lineWidth,
       reveal = _ref.reveal,
-      active = _ref.active,
       expand = _ref.expand,
-      expandPercent = _ref.expandPercent,
-      props = objectWithoutProperties(_ref, ['cx', 'cy', 'startAngle', 'lengthAngle', 'radius', 'lineWidth', 'reveal', 'active', 'expand', 'expandPercent']);
+      active = _ref.active,
+      focus = _ref.focus,
+      expandFocusPercent = _ref.expandFocusPercent,
+      expandActivePercent = _ref.expandActivePercent,
+      props = objectWithoutProperties(_ref, ['cx', 'cy', 'startAngle', 'lengthAngle', 'radius', 'lineWidth', 'reveal', 'expand', 'active', 'focus', 'expandFocusPercent', 'expandActivePercent']);
 
   var actualRadio = radius - lineWidth / 2;
   var pathCommands = makePathCommands(cx, cy, startAngle, lengthAngle, actualRadio);
@@ -135,7 +137,7 @@ function ReactMinimalPieChartPath(_ref) {
     strokeDashoffset = strokeDasharray + strokeDasharray / 100 * reveal;
   }
 
-  var strokeWidth = lineWidth * (active && expand ? 1 + expandPercent : 1);
+  var strokeWidth = !expand ? lineWidth : active ? lineWidth * (1 + expandActivePercent) : focus ? lineWidth * (1 + expandFocusPercent) : lineWidth;
 
   return React.createElement('path', _extends({
     d: pathCommands,
@@ -156,8 +158,10 @@ ReactMinimalPieChartPath.propTypes = {
   lineWidth: PropTypes.number,
   reveal: PropTypes.number,
   active: PropTypes.bool,
+  focus: PropTypes.bool,
   expand: PropTypes.bool,
-  expandPercent: PropTypes.number
+  expandFocusPercent: PropTypes.number,
+  expandActivePercent: PropTypes.number
 };
 
 ReactMinimalPieChartPath.defaultProps = {
@@ -165,7 +169,10 @@ ReactMinimalPieChartPath.defaultProps = {
   lengthAngle: 0,
   lineWidth: 100,
   radius: 100,
-  expandPercent: 0.5
+  active: false,
+  focus: false,
+  expandFocusPercent: 0.2,
+  expandActivePercent: 0.5
 };
 
 function ReactMinimalPieChartCircle(_ref) {
@@ -257,6 +264,8 @@ var makeSegments = function makeSegments(data, props, hide) {
 
   return data.map(function (dataEntry, index) {
     var isActiveSegment = index === props.activeIndex;
+    var isFocusSegment = index === props.focusIndex;
+
     var startAngle = lastSegmentAngle;
     lastSegmentAngle += dataEntry.degrees + segmentsPaddingAngle;
 
@@ -271,8 +280,10 @@ var makeSegments = function makeSegments(data, props, hide) {
       reveal: reveal,
       style: style,
       active: isActiveSegment,
+      focus: isFocusSegment,
       expand: props.expand,
-      expandPercent: props.expandPercent,
+      expandFocusPercent: props.expandFocusPercent,
+      expandActivePercent: props.expandActivePercent,
       stroke: dataEntry.color,
       strokeLinecap: props.rounded ? 'round' : undefined,
       fill: 'none',
@@ -387,8 +398,10 @@ ReactMinimalPieChart.propTypes = {
   animationDuration: PropTypes.number,
   animationEasing: PropTypes.string,
   expand: PropTypes.bool,
-  expandPercent: PropTypes.number,
+  expandFocusPercent: PropTypes.number,
+  expandActivePercent: PropTypes.number,
   activeIndex: PropTypes.number,
+  hoverIndex: PropTypes.number,
   reveal: PropTypes.number,
   children: PropTypes.node,
   onMouseOver: PropTypes.func,
@@ -413,9 +426,11 @@ ReactMinimalPieChart.defaultProps = {
   animate: false,
   animationDuration: 500,
   animationEasing: 'ease-out',
-  activeIndex: -1,
   expand: true,
-  expandPercent: 0.4,
+  activeIndex: -1,
+  focusIndex: -1,
+  expandFocusPercent: 0.1,
+  expandActivePercent: 0.3,
   onMouseOver: undefined,
   onMouseOut: undefined,
   onClick: undefined
