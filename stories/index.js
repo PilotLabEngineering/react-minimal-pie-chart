@@ -57,8 +57,10 @@ class DemoInteraction extends Component {
   render() {
     return (
       <PieChart
-        width={100}
-        height={100}
+        width={400}
+        height={400}
+        cx={200}
+        cy={200}
         data={this.state.data}
         activeIndex={this.state.activeIndex}
         focusIndex={this.state.focusIndex}
@@ -66,13 +68,14 @@ class DemoInteraction extends Component {
           transition: 'stroke-width .1s ease-out',
           cursor: 'pointer',
         }}
-        radius={40}
+        radius={200}
         cutout={true}
-        cutoutRadius={30}
+        cutoutRadius={180}
         lengthAngle={-360}
         onClick={this.onSegmentClick}
         onMouseOver={this.onMouseOver}
         onMouseOut={this.onMouseOut}
+        label="100"
         expand
         animate
       />

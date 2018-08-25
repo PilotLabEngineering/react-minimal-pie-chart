@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Path from './ReactMinimalPieChartPath';
 import Circle from './ReactMinimalPieChartCircle';
+import Label from './ReactMinimalPieChartLabel';
 
 const sumValues = data =>
   data.reduce((acc, dataEntry) => acc + dataEntry.value, 0);
@@ -172,6 +173,9 @@ export default class ReactMinimalPieChart extends PureComponent {
             fill={this.props.cutoutFill}
           />
         ) : null}
+        {this.props.label ? (
+          <Label className={this.props.labelClassName}>yay</Label>
+        ) : null}
       </svg>
     );
   }
@@ -211,6 +215,8 @@ ReactMinimalPieChart.propTypes = {
   animate: PropTypes.bool,
   animationDuration: PropTypes.number,
   animationEasing: PropTypes.string,
+  label: PropTypes.string,
+  labelClassName: PropTypes.string,
   expand: PropTypes.bool,
   expandFocusPercent: PropTypes.number,
   expandActivePercent: PropTypes.number,
@@ -240,6 +246,8 @@ ReactMinimalPieChart.defaultProps = {
   animate: false,
   animationDuration: 500,
   animationEasing: 'ease-out',
+  label: false,
+  labelClassName: null,
   expand: true,
   activeIndex: -1,
   focusIndex: -1,
