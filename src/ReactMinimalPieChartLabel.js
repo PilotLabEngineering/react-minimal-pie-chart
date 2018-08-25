@@ -7,7 +7,7 @@ export default function ReactMinimalPieChartLabel({ children, className }) {
       x="50%"
       y="50%"
       textAnchor="middle"
-      dominantBaseling="middle"
+      dominantBaseline="middle"
       className={className}
     >
       {children}
