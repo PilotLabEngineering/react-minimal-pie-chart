@@ -206,6 +206,34 @@ ReactMinimalPieChartCircle.defaultProps = {
   fill: '#FFFFFF'
 };
 
+function ReactMinimalPieChartLabel(_ref) {
+  var children = _ref.children,
+      className = _ref.className;
+
+  return React.createElement(
+    'text',
+    {
+      x: '50%',
+      y: '50%',
+      textAnchor: 'middle',
+      className: className
+    },
+    children
+  );
+}
+
+ReactMinimalPieChartLabel.displayName = 'ReactMinimalPieChartLabel';
+
+ReactMinimalPieChartLabel.propTypes = {
+  children: PropTypes.string,
+  className: PropTypes.string
+};
+
+ReactMinimalPieChartLabel.defaultProps = {
+  children: null,
+  className: null
+};
+
 var sumValues = function sumValues(data) {
   return data.reduce(function (acc, dataEntry) {
     return acc + dataEntry.value;
@@ -362,7 +390,12 @@ var ReactMinimalPieChart = function (_PureComponent) {
         cy: this.props.cy,
         radius: this.props.cutoutRadius,
         fill: this.props.cutoutFill
-      }) : null
+      }) : null,
+      this.props.label ? React.createElement(
+        ReactMinimalPieChartLabel,
+        { className: this.props.labelClassName },
+        this.props.label
+      ) : null
     );
   };
 
@@ -397,6 +430,8 @@ ReactMinimalPieChart.propTypes = {
   animate: PropTypes.bool,
   animationDuration: PropTypes.number,
   animationEasing: PropTypes.string,
+  label: PropTypes.string,
+  labelClassName: PropTypes.string,
   expand: PropTypes.bool,
   expandFocusPercent: PropTypes.number,
   expandActivePercent: PropTypes.number,
@@ -426,6 +461,8 @@ ReactMinimalPieChart.defaultProps = {
   animate: false,
   animationDuration: 500,
   animationEasing: 'ease-out',
+  label: null,
+  labelClassName: null,
   expand: true,
   activeIndex: -1,
   focusIndex: -1,
