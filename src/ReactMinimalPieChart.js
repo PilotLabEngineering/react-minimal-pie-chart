@@ -174,7 +174,9 @@ export default class ReactMinimalPieChart extends PureComponent {
           />
         ) : null}
         {this.props.label ? (
-          <Label className={this.props.labelClassName}>yay</Label>
+          <Label className={this.props.labelClassName}>
+            {this.props.label}
+          </Label>
         ) : null}
       </svg>
     );
@@ -246,7 +248,7 @@ ReactMinimalPieChart.defaultProps = {
   animate: false,
   animationDuration: 500,
   animationEasing: 'ease-out',
-  label: false,
+  label: null,
   labelClassName: null,
   expand: true,
   activeIndex: -1,
